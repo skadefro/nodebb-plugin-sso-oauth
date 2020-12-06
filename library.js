@@ -47,22 +47,22 @@
 	 */
 
 	const constants = Object.freeze({
-		type: '',	// Either 'oauth' or 'oauth2'
-		name: '',	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
+		type: nconf.get('oauth:type'),	// Either 'oauth' or 'oauth2'
+		name: nconf.get('oauth:name'),	// Something unique to your OAuth provider in lowercase, like "github", or "nodebb"
 		oauth: {
-			requestTokenURL: '',
-			accessTokenURL: '',
-			userAuthorizationURL: '',
+			requestTokenURL: nconf.get('oauth:requestTokenURL'),
+			accessTokenURL: nconf.get('oauth:accessTokenURL'),
+			userAuthorizationURL: nconf.get('oauth:userAuthorizationURL'),
 			consumerKey: nconf.get('oauth:key'),	// don't change this line
 			consumerSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
 		oauth2: {
-			authorizationURL: '',
-			tokenURL: '',
+			authorizationURL: nconf.get('oauth:authorizationURL'),
+			tokenURL: nconf.get('oauth:tokenURL'),
 			clientID: nconf.get('oauth:id'),	// don't change this line
 			clientSecret: nconf.get('oauth:secret'),	// don't change this line
 		},
-		userRoute: '',	// This is the address to your app's "user profile" API endpoint (expects JSON)
+		userRoute: nconf.get('oauth:userRoute'),	// This is the address to your app's "user profile" API endpoint (expects JSON)
 	});
 
 	const OAuth = {};
@@ -181,10 +181,15 @@
 
 		// Do you want to automatically make somebody an admin? This line might help you do that...
 		// profile.isAdmin = data.isAdmin ? true : false;
+		if (data.role == "admin" || data.role == "admins" || data.role == "Admin" || data.role == "Admins") {
+			profile.isAdmin = true;
+		}
 
 		// Delete or comment out the next TWO (2) lines when you are ready to proceed
-		process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
-		return callback(new Error('Congrats! So far so good -- please see server log for details'));
+		// process.stdout.write('===\nAt this point, you\'ll need to customise the above section to id, displayName, and emails into the "profile" object.\n===');
+		process.stdout.write(JSON.stringify(profile, null, 2));
+		process.stdout.write(JSON.stringify(data, null, 2));
+		// return callback(new Error('Congrats! So far so good -- please see server log for details'));
 
 		// eslint-disable-next-line
 		callback(null, profile);
